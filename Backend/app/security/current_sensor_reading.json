@@ -1,0 +1,9 @@
+{
+    "timestamp": "2025-07-08 21:47:34",
+    "sensor_id": "sensor_clima_001",
+    "temperatura_celsius": 25.38,
+    "humedad_porcentaje": 40,
+    "luz_ldr_analog": 3.78,
+    "luz_ldr_voltaje": 0.0185,
+    "luz_ldr_resistencia": 59239.46
+}
