@@ -26,7 +26,6 @@ from catboost import CatBoostRegressor
 
 # Modelos de Series de Tiempo
 from statsmodels.tsa.arima.model import ARIMA
-from prophet import Prophet
 
 # Modelo de Red Neuronal (LSTM)
 from sklearn.preprocessing import MinMaxScaler
