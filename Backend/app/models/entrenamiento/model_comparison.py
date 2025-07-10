@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import os
 import time
+import joblib
 
 # Ignorar advertencias para una salida más limpia
 import warnings
@@ -41,6 +42,7 @@ def main():
     # Ruta al archivo procesado y a la carpeta de salida para los gráficos
     data_path = os.path.join('Backend', 'app', 'models', 'eda', 'datos_procesados.csv')
     output_dir = os.path.join('Backend', 'app', 'models','entrenamiento')
+    os.makedirs(output_dir, exist_ok=True)
 
     try:
         # Cargar los datos, parsear la columna de fecha y establecerla como índice
@@ -100,6 +102,9 @@ def main():
         y_pred = model.predict(X_test)
         evaluate_model(name, y_test, y_pred)
         print(f"   (Tiempo: {time.time() - start_time:.2f}s)")
+
+        # Guardar modelo
+        joblib.dump(model, os.path.join(output_dir, f'{name.replace(" ", "_")}.joblib'))
         
     # --- Modelos especiales de Series de Tiempo ---
 
@@ -111,6 +116,7 @@ def main():
         arima_model = ARIMA(y_train, order=(5, 1, 0)).fit()
         arima_pred = arima_model.forecast(steps=len(y_test))
         evaluate_model("ARIMA", y_test, arima_pred)
+        arima_model.save(os.path.join(output_dir, 'ARIMA.pkl'))
         print(f"   (Tiempo: {time.time() - start_time:.2f}s)")
     except Exception as e:
         print(f"❌ ARIMA falló: {e}")
@@ -143,14 +149,18 @@ def main():
     X_test_lstm, _ = create_sequences(inputs, SEQ_LENGTH)
     lstm_pred_scaled = lstm_model.predict(X_test_lstm)
     lstm_pred = scaler.inverse_transform(lstm_pred_scaled)
-
     evaluate_model("LSTM", y_test, lstm_pred.flatten())
+
+    # Guardar modelo y escalador
+    lstm_model.save(os.path.join(output_dir, 'LSTM.h5'))
+    joblib.dump(scaler, os.path.join(output_dir, 'LSTM_scaler.joblib'))
     print(f"   (Tiempo: {time.time() - start_time:.2f}s)")
 
 
     # --- 3. Comparación y Visualización de Resultados ---
     # Convertir el diccionario de resultados a un DataFrame
     results_df = pd.DataFrame(results).T.sort_values(by='RMSE')
+    results_df.to_csv(os.path.join(output_dir, 'model_metrics.csv'))
 
     # Gráfico de Barras: Comparación de RMSE
     plt.figure(figsize=(12, 7))

@@ -1,7 +1,7 @@
 # app/main.py
 from contextlib import asynccontextmanager
 import asyncio 
-from fastapi import FastAPI # Importar Request ya no es necesario aquí
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api import routes_data, routes_model
 from app.services.sensor_fetcher import fetch_sensor_data_via_ssh
