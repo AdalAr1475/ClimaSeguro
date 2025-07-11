@@ -10,7 +10,7 @@ from log_manager import setup_logger
 logger = setup_logger(__name__)
 
 # --- Configuración del Cliente ---
-SERVER_HOST = '127.0.0.1' # La IP o hostname donde tu ssh_server.py está corriendo
+SERVER_HOST = '0.0.0.0' # La IP o hostname donde tu ssh_server.py está corriendo
 SERVER_PORT = 2222        # El puerto donde tu ssh_server.py está escuchando
 SSH_USERNAME = 'erp_user' # El nombre de usuario que el servidor espera para la autenticación por clave
 PRIVATE_KEY_PATH = "id_rsa_erp" # Ruta a la clave privada generada por keygen.py

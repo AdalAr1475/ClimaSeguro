@@ -10,7 +10,7 @@ from ..security.log_manager import setup_logger
 logger = setup_logger(__name__)
 
 # --- Configuración del servidor SSH (debe coincidir con ssh_server.py) ---
-SSH_HOST = '127.0.0.1' # O la IP donde esté corriendo tu ssh_server.py
+SSH_HOST = '0.0.0.0' # O la IP donde esté corriendo tu ssh_server.py
 SSH_PORT = 2222
 SSH_USERNAME = 'testuser' # Debe coincidir con el usuario configurado en CustomSSHServer
 
