@@ -15,8 +15,8 @@ logger = setup_logger(__name__)
 # --- Rutas de archivos ---
 # Considera crear una carpeta para los datos generados, ej. 'sensor_data/'
 # Asegúrate de que esta ruta sea accesible para el servidor SSH también.
-sensor_csv_output_path = "D:/Proyectos2025/ClimaSeguro/Backend/app/security/datos_arduino_simulado.csv"
-current_reading_json_path = "D:/Proyectos2025/ClimaSeguro/Backend/app/security/current_sensor_reading.json"
+sensor_csv_output_path = "C:/Adal/UNI/6to Ciclo/Analítica de Datos/Repositorios proyectos/ClimaSeguro/Backend/app/security/datos_arduino_simulado.csv"
+current_reading_json_path = "C:/Adal/UNI/6to Ciclo/Analítica de Datos/Repositorios proyectos/ClimaSeguro/Backend/app/security/current_sensor_reading.json"
 
 # Asegurarse de que el directorio exista
 os.makedirs(os.path.dirname(sensor_csv_output_path), exist_ok=True)

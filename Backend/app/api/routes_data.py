@@ -4,6 +4,7 @@ from fastapi import APIRouter, Query, HTTPException, Request # <--- MODIFICADO: 
 from typing import Optional
 from pydantic import BaseModel, validator # <--- MODIFICADO: Importar validator para Pydantic
 from datetime import datetime
+import utils.file_loader as file_loader # <--- MODIFICADO: Importar desde utils.file_loader
 
 from ..security.log_manager import setup_logger
 logger = setup_logger(__name__)
@@ -73,8 +74,8 @@ def get_ultima_lectura(distrito: Optional[str] = Query(None, description="Nombre
     Si se proporciona un distrito, devuelve la última lectura solo de ese distrito.
     """
     try:
-        df = cargar_csv()
-        datos = obtener_ultima_lectura(df, distrito=distrito)
+        df = file_loader.cargar_csv()
+        datos = file_loader.obtener_ultima_lectura(df, distrito=distrito)
 
         if not datos:
             raise HTTPException(status_code=404, detail="No se encontraron registros para el distrito indicado.") # Mejor usar HTTPException
