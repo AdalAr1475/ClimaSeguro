@@ -72,7 +72,7 @@ app.add_middleware(
 )
 
 # Registrar rutas de la API
-app.include_router(routes_data.router, prefix="/data", tags=["Datos"])
+# app.include_router(routes_data.router, prefix="/data", tags=["Datos"])
 app.include_router(routes_model.router, prefix="/model", tags=["Modelos"])
 
 # Ruta raíz opcional
