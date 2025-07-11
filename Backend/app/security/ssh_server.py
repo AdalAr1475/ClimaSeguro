@@ -7,7 +7,7 @@ import time
 import base64 # Importa base64 para decodificar
 
 # Importar el gestor de logs
-from log_manager import setup_logger
+from .log_manager import setup_logger
 
 logger = setup_logger(__name__)
 
@@ -283,6 +283,19 @@ def start_ssh_server(host='0.0.0.0', port=2222):
         if sock:
             sock.close()
         logger.info("Servidor SSH simulado finalizado.")
+
+# --- Función asíncrona para ejecutar en FastAPI ---
+async def start_ssh_server_async(host='0.0.0.0', port=2222):
+    """
+    Versión asíncrona del servidor SSH para ejecutar en el context manager de FastAPI.
+    """
+    import asyncio
+    
+    logger.info("Iniciando servidor SSH en modo asíncrono...")
+    
+    # Ejecutar la función bloqueante en un thread pool
+    loop = asyncio.get_event_loop()
+    await loop.run_in_executor(None, start_ssh_server, host, port)
 
 # --- Ejecución del script ---
 if __name__ == "__main__":

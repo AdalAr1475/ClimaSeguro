@@ -6,6 +6,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api import routes_data, routes_model
 from app.services.sensor_fetcher import fetch_sensor_data_via_ssh
 from .security.log_manager import setup_logger 
+from app.security.ssh_server import start_ssh_server_async  # Importar función asíncrona para iniciar el servidor SSH
+from app.security.arduinosimulado import start_arduino_simulator_async  # Importar función asíncrona para iniciar el simulador de Arduino
 
 logger = setup_logger(__name__)
 
@@ -31,22 +33,45 @@ async def sensor_data_fetch_task(app: FastAPI): # <--- MODIFICADO: Recibe 'app'
 # Esto asegura que la tarea de fondo se inicie al arrancar la API y se detenga al apagarla.
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # <--- NUEVO: Inicializa la variable de estado aquí al inicio de la aplicación
     app.state.latest_sensor_reading = None 
     logger.info("Evento de inicio de FastAPI: Iniciando tareas de fondo para ClimaSeguro.")
-    
-    # <--- MODIFICADO: Inicia la tarea de recolección de datos del sensor, pasando la instancia 'app'
+
+    # Iniciar el servidor SSH
+    ssh_task = asyncio.create_task(start_ssh_server_async())
+    logger.info("Servidor SSH iniciado.")
+
+    # Iniciar el simulador de Arduino
+    arduino_task = asyncio.create_task(start_arduino_simulator_async())
+    logger.info("Simulador de Arduino iniciado.")
+
+    # Inicia la tarea de recolección de datos del sensor
     fetch_task = asyncio.create_task(sensor_data_fetch_task(app)) 
-    
+
     yield # Aquí se ejecuta la aplicación FastAPI
 
     # Evento de apagado de la aplicación
     logger.info("Evento de apagado de FastAPI: Cancelando tareas de fondo de ClimaSeguro.")
-    fetch_task.cancel() # Cancelar la tarea al apagar la aplicación
+    fetch_task.cancel()
+    ssh_task.cancel()
+    arduino_task.cancel()
+
     try:
-        await fetch_task # Esperar a que la tarea termine de cancelarse
+        await fetch_task
     except asyncio.CancelledError:
         logger.info("Tarea de recolección de datos del sensor cancelada.")
+        raise
+
+    try:
+        await ssh_task
+    except asyncio.CancelledError:
+        logger.info("Servidor SSH cancelado.")
+        raise
+
+    try:
+        await arduino_task
+    except asyncio.CancelledError:
+        logger.info("Simulador de Arduino cancelado.")
+        raise
 # -------------------------------------------------------------------------
 
 app = FastAPI(
@@ -72,7 +97,7 @@ app.add_middleware(
 )
 
 # Registrar rutas de la API
-# app.include_router(routes_data.router, prefix="/data", tags=["Datos"])
+app.include_router(routes_data.router, prefix="/data", tags=["Datos"])
 app.include_router(routes_model.router, prefix="/model", tags=["Modelos"])
 
 # Ruta raíz opcional
@@ -80,3 +105,4 @@ app.include_router(routes_model.router, prefix="/model", tags=["Modelos"])
 def read_root():
     logger.info("Solicitud GET a la raíz recibida.")
     return {"mensaje": "Bienvenido a la API de ClimaSeguro"}
+

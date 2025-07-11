@@ -7,7 +7,7 @@ import os
 import logging # Para integrar el logging
 
 # --- Configuración del Logging---
-from log_manager import setup_logger
+from .log_manager import setup_logger
 
 logger = setup_logger(__name__)
 
@@ -108,6 +108,23 @@ def generate_and_save_sensor_data():
         logger.error(f"Error al guardar la lectura en JSON: {e}")
 
     return sensor_data_json
+
+# --- Función asíncrona para ejecutar en FastAPI ---
+async def start_arduino_simulator_async():
+    """
+    Versión asíncrona del simulador de Arduino para ejecutar en el context manager de FastAPI.
+    """
+    import asyncio
+    
+    logger.info("Iniciando simulador de Arduino en modo asíncrono...")
+    
+    while True:
+        try:
+            generate_and_save_sensor_data()
+            await asyncio.sleep(5)  # Espera asíncrona de 5 segundos
+        except Exception as e:
+            logger.error(f"Error durante la simulación asíncrona: {e}")
+            await asyncio.sleep(1)  # Espera breve antes de reintentar
 
 # --- Bucle principal de simulación ---
 if __name__ == "__main__":
