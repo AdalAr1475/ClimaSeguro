@@ -1,8 +1,7 @@
 import streamlit as st
 import requests
 
-API_URL = "http://localhost:8000"  # Cambia esto si tu backend está en otro host/puerto
-
+API_URL = "http://localhost:8000" 
 st.title("ClimaSeguro - Dashboard Básico")
 
 # Última lectura

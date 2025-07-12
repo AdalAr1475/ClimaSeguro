@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Optional
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
-DEFAULT_FILE = "clima_huancavelica.csv"
+DEFAULT_FILE = "dataset_huancavelica.csv"
 
 def cargar_csv(nombre_archivo: Optional[str] = None) -> pd.DataFrame:
     """
@@ -17,7 +17,9 @@ def cargar_csv(nombre_archivo: Optional[str] = None) -> pd.DataFrame:
         raise FileNotFoundError(f"El archivo {archivo} no fue encontrado.")
 
     try:
-        df = pd.read_csv(archivo)
+        df = pd.read_csv(archivo, delimiter=";")
+        print("ATENCION COLUMNAS")
+        print(df.columns.tolist())
     except Exception as e:
         raise ValueError(f"No se pudo leer el CSV: {e}")
 
@@ -39,10 +41,10 @@ def obtener_ultima_lectura(df: pd.DataFrame, distrito: Optional[str] = None) -> 
     ultima = df_ordenado.iloc[-1]
 
     return {
-        "departamento": ultima["departamento"],
-        "provincia": ultima["provincia"],
-        "distrito": ultima["distrito"],
-        "ubigeo": ultima["ubigeo"],
+        "departamento": str(ultima["departamento"]),
+        "provincia": str(ultima["provincia"]),
+        "distrito": str(ultima["distrito"]),
+        "ubigeo": int(ultima["ubigeo"]),
         "ano": int(ultima["ano"]),
         "semana": int(ultima["semana"]),
         "tmean": float(ultima["tmean"]),
