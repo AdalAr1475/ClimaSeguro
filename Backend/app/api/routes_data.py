@@ -4,7 +4,7 @@ from fastapi import APIRouter, Query, HTTPException, Request # <--- MODIFICADO: 
 from typing import Optional
 from pydantic import BaseModel, validator # <--- MODIFICADO: Importar validator para Pydantic
 from datetime import datetime
-import utils.file_loader as file_loader # <--- MODIFICADO: Importar desde utils.file_loader
+from app.utils import file_loader # <--- MODIFICADO: Importar desde utils.file_loader
 
 from ..security.log_manager import setup_logger
 logger = setup_logger(__name__)
